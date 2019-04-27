@@ -108,6 +108,7 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	} else {
 		b = &bytes.Buffer{}
 	}
+	encoder.SetEscapeHTML(false) // rocky
 
 	encoder := json.NewEncoder(b)
 	if f.PrettyPrint {
@@ -117,5 +118,12 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 		return nil, fmt.Errorf("failed to marshal fields to JSON, %v", err)
 	}
 
-	return b.Bytes(), nil
+	// rocky 将转义的替换回来
+	value := b.Bytes()
+	old := [...]string{"\\n", "\\t", `\"`}
+	new := [...]string{"\n", "\t", `"`}
+	for i := 0; i < len(old); i++ {
+		value = bytes.Replace(value, []byte(old[i]), []byte(new[i]), -1)
+	}
+	return value, nil
 }
