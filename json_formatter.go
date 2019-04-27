@@ -108,12 +108,12 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	} else {
 		b = &bytes.Buffer{}
 	}
-	encoder.SetEscapeHTML(false) // rocky
 
 	encoder := json.NewEncoder(b)
 	if f.PrettyPrint {
 		encoder.SetIndent("", "  ")
 	}
+	encoder.SetEscapeHTML(false) // rocky
 	if err := encoder.Encode(data); err != nil {
 		return nil, fmt.Errorf("failed to marshal fields to JSON, %v", err)
 	}
